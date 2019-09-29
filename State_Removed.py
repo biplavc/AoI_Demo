@@ -15,10 +15,12 @@ turtle.ht()
 turtle.setundobuffer(None)
 turtle.delay(1)
 # turtle.tracer(20,0)
-turtle.register_shape("tank22.gif")
+turtle.register_shape("tank11.gif")
 turtle.register_shape("drone1.gif")
 turtle.register_shape("drone2.gif")
 turtle.register_shape("antenna.gif")
+turtle.register_shape("bullet1.gif")
+
 
 
 
@@ -33,7 +35,7 @@ class Game():
 		self.pen.goto(settings.x_min-40, settings.y_max+40) # settings the game boundaries a bit larger than the maximum coordinates
 		self.pen.pendown()
 		for side in range(4):
-			self.pen.fd(800)
+			self.pen.fd(800) # so the overall boundary will be x from [-400,400] and y from [-400, 400]
 			self.pen.rt(90)
 		self.pen.penup()
 		self.pen.ht()
@@ -51,6 +53,7 @@ class Bullet(turtle.Turtle):
 		self.color("black")
 		self.fd(0)
 		self.goto(0, 0)
+		self.shape("bullet1.gif")
 
 class Player(turtle.Turtle):
 	def __init__(self, spriteshape, color, startx, starty):
@@ -60,10 +63,12 @@ class Player(turtle.Turtle):
 		self.penup()
 		self.color(color)
 		self.fd(0)
-		self.goto(startx, starty)
+		self.goto(startx, starty) # for the actual values, see settings.py and the declaration of the player object
 		self.left(90)
 		self.showturtle()
 	
+# player's controls defined
+
 	def move(self):
 		self.fd(5)
 	def turn_left(self):
@@ -74,7 +79,6 @@ class Player(turtle.Turtle):
 		self.move()
 
 # Define Enemy1 class, will move in a circle
-
 class Enemy1(turtle.Turtle):
  
 	def __init__(self, spriteshape, color, startx, starty): 
@@ -85,28 +89,29 @@ class Enemy1(turtle.Turtle):
 		self.color(color)
 		self.fd(0)
 		self.setposition(startx, starty)
-		self.bullet_list = []
+		self.bullet_list1 = []
 		self.freq1 = settings.freq1 # frequency of shooting
 
 
 	def move1(self):  # circle movement drone
 		self.rt(2)
 		self.fd(2)
-		self.freq1 = self.freq1 - 1
+		self.freq1 = self.freq1 - 1 # reduce count for every step, fire when step equals frequency. then reset the count
 		if (self.freq1==0):
 			self.enemy1_fire()
 			self.freq1 = settings.freq1
 
-		for bullet in self.bullet_list:
+	def move_bullet1(self,bullet_list1):
+		for bullet in self.bullet_list1:
 			y = bullet.ycor()
 			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
-		for bullet in self.bullet_list:
+		for bullet in self.bullet_list1:
 			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
-				self.bullet_list.remove(bullet)
+				self.bullet_list1.remove(bullet)
 				# print(len(enemy1.bullet_list))
 
 
@@ -115,9 +120,9 @@ class Enemy1(turtle.Turtle):
 		y = self.ycor()
 		bullet1 = Bullet()
 		bullet1.setposition(x,y) # bullet will appear just above the player
-		bullet1.setheading(270)
+		bullet1.setheading(270) # make it face downwards
 		bullet1.showturtle()
-		self.bullet_list.append(bullet1)
+		self.bullet_list1.append(bullet1)
 
 num_Enemy1 = 1
 enemies1 = []
@@ -139,7 +144,7 @@ class Enemy2(turtle.Turtle):
 		self.fd(0)
 		self.setheading(0)
 		self.setposition(startx, starty)
-		self.bullet_list = []
+		self.bullet_list2 = []
 		self.freq2 = settings.freq2 # frequency of shooting
 		self.square_size = 200
 		self.startx = startx
@@ -177,18 +182,19 @@ class Enemy2(turtle.Turtle):
 			self.enemy2_fire()
 			self.freq2 = settings.freq2
 
-
-		for bullet in self.bullet_list:
+	def move_bullet2(self,bullet_list2):
+		for bullet in self.bullet_list2:
 			y = bullet.ycor()
 			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
-		for bullet in self.bullet_list:
+		for bullet in self.bullet_list2:
 			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
-				self.bullet_list.remove(bullet)
-				# print(len(enemy2.bullet_list))
+				self.bullet_list2.remove(bullet)
+				# print(len(enemy1.bullet_list))
+
 
 	def enemy2_fire(self):
 		x = self.xcor()
@@ -198,7 +204,7 @@ class Enemy2(turtle.Turtle):
 		bullet2.setposition(x,y) # bullet will appear just above the player
 		bullet2.setheading(270)
 		bullet2.showturtle()
-		self.bullet_list.append(bullet2)
+		self.bullet_list2.append(bullet2)
 
 num_Enemy2 = 1
 enemies2 = []
@@ -211,14 +217,14 @@ for i in range(num_Enemy2):
 class Enemy3(turtle.Turtle):
 
 	def __init__(self, spriteshape, color, startx, starty): # green
-		turtle.Turtle.__init__(self, shape = "tank22.gif")
+		turtle.Turtle.__init__(self, shape = "tank11.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
 		self.color(color)
 		self.fd(0)
 		self.setposition(settings.x3, settings.y3)
-		self.bullet_list = []
+		self.bullet_list3 = []
 		self.freq3 = settings.freq3
 		self.speed3 = settings.speed3
 	
@@ -230,7 +236,7 @@ class Enemy3(turtle.Turtle):
 		bullet3.setposition(x,y) # bullet will appear just above the player
 		bullet3.setheading(270)
 		bullet3.showturtle()
-		self.bullet_list.append(bullet3)
+		self.bullet_list3.append(bullet3)
 
 	def move3(self): # left and right sweeping across the x axis
 		self.freq3 = self.freq3 - 1
@@ -243,17 +249,21 @@ class Enemy3(turtle.Turtle):
 		if self.xcor() > (settings.x_max-200) or self.xcor() < (settings.x_min+200): # sweeping just the central part of the area
 			self.speed3  = self.speed3 * (-1) # change speed direction to left when at boundary
 
-		for bullet in self.bullet_list:
+	def move_bullet3(self,bullet_list3):
+		for bullet in self.bullet_list3:
 			y = bullet.ycor()
 			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
-		for bullet in self.bullet_list:
+		for bullet in self.bullet_list3:
 			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
-				self.bullet_list.remove(bullet)
-				# print(len(enemy3.bullet_list))
+				self.bullet_list3.remove(bullet)
+				# print(len(enemy1.bullet_list))
+
+
+
 
 
 num_Enemy3 = 1
@@ -279,15 +289,18 @@ while True:
 
 	for enemy1 in enemies1:
 		enemy1.move1()
+		enemy1.move_bullet1(enemy1.bullet_list1)
 		
 	# enemy 2 loop
 
 	for enemy2 in enemies2:
 		enemy2.move2()
+		enemy2.move_bullet2(enemy2.bullet_list2)
 
 	# enemy 3 loop
 
 	for enemy3 in enemies3:
 		enemy3.move3()
+		enemy3.move_bullet3(enemy3.bullet_list3)
 
 delay = raw_input("Press enter to finish. > ")
