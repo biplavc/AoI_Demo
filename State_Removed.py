@@ -2,11 +2,12 @@
 import os
 import random
 import turtle
+import settings
 
 
 #latest
 wn = turtle.Screen()
-wn.bgpic("space_invaders_background_new.gif")
+wn.bgpic("white_back.gif")
 turtle.fd(0)
 turtle.speed(0)
 turtle.bgcolor("black")
@@ -14,9 +15,11 @@ turtle.ht()
 turtle.setundobuffer(None)
 turtle.delay(1)
 # turtle.tracer(20,0)
-turtle.register_shape("tank1.gif")
-turtle.register_shape("tank2.gif")
-turtle.register_shape("tank3.gif")
+turtle.register_shape("tank22.gif")
+turtle.register_shape("drone1.gif")
+turtle.register_shape("drone2.gif")
+turtle.register_shape("antenna.gif")
+
 
 
 class Game():	
@@ -27,7 +30,7 @@ class Game():
 		self.pen.color("white")
 		self.pen.pensize(0)
 		self.pen.penup()
-		self.pen.goto(-400, 400)
+		self.pen.goto(settings.x_min-40, settings.y_max+40) # settings the game boundaries a bit larger than the maximum coordinates
 		self.pen.pendown()
 		for side in range(4):
 			self.pen.fd(800)
@@ -45,13 +48,13 @@ class Bullet(turtle.Turtle):
 		self.shape("arrow")
 		self.penup()
 		self.speed(8)
-		self.color("white")
+		self.color("black")
 		self.fd(0)
 		self.goto(0, 0)
 
 class Player(turtle.Turtle):
 	def __init__(self, spriteshape, color, startx, starty):
-		turtle.Turtle.__init__(self, shape = spriteshape)
+		turtle.Turtle.__init__(self, shape = "antenna.gif")
 		self.hideturtle()
 		self.speed(3)
 		self.penup()
@@ -73,9 +76,9 @@ class Player(turtle.Turtle):
 # Define Enemy1 class, will move in a circle
 
 class Enemy1(turtle.Turtle):
-
-	def __init__(self, spriteshape, color, startx, starty):
-		turtle.Turtle.__init__(self, shape = "tank1.gif")
+ 
+	def __init__(self, spriteshape, color, startx, starty): 
+		turtle.Turtle.__init__(self, shape = "drone1.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
@@ -83,24 +86,24 @@ class Enemy1(turtle.Turtle):
 		self.fd(0)
 		self.setposition(startx, starty)
 		self.bullet_list = []
-		self.frequency1 = 67 # frequency of shooting
+		self.freq1 = settings.freq1 # frequency of shooting
 
 
-	def move1(self):
-		self.rt(5)
-		self.fd(10)
-		self.frequency1 = self.frequency1 - 1
-		if (self.frequency1==0):
+	def move1(self):  # circle movement drone
+		self.rt(2)
+		self.fd(2)
+		self.freq1 = self.freq1 - 1
+		if (self.freq1==0):
 			self.enemy1_fire()
-			self.frequency1 = 67
+			self.freq1 = settings.freq1
 
 		for bullet in self.bullet_list:
 			y = bullet.ycor()
-			y1 = y - 30
+			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
 		for bullet in self.bullet_list:
-			if (bullet.ycor()>390 or bullet.xcor()>390 or bullet.ycor()<-390 or bullet.xcor()<-390):
+			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
 				self.bullet_list.remove(bullet)
@@ -119,16 +122,16 @@ class Enemy1(turtle.Turtle):
 num_Enemy1 = 1
 enemies1 = []
 for i in range(num_Enemy1):
-	b = Enemy1("circle", "red", random.randint(-180,180), random.randint(-100,200))
+	b = Enemy1("circle", "red", settings.x1, settings.y1)
 	enemies1.append(b)
 
 # Enemy1 class defined 
 
-# define Enemy2 class, will move in a square
+# define Enemy2 class, will move in a square. drone
 class Enemy2(turtle.Turtle):
 
 	def __init__(self, spriteshape, color, startx, starty):
-		turtle.Turtle.__init__(self, shape = "tank2.gif")
+		turtle.Turtle.__init__(self, shape = "drone2.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
@@ -137,15 +140,15 @@ class Enemy2(turtle.Turtle):
 		self.setheading(0)
 		self.setposition(startx, starty)
 		self.bullet_list = []
-		self.frequency2 = 73 # frequency of shooting
+		self.freq2 = settings.freq2 # frequency of shooting
 		self.square_size = 200
 		self.startx = startx
 		self.starty = starty
-		self.speed2 = 10 # pixels to move per time slot
+		self.speed2 = settings.speed2 # pixels to move per time slot
 		#print("Starting positions are:", startx, ", ", starty)
 
 
-	def move2(self):
+	def move2(self): # square
 		#print (self.heading())
 		if self.heading() == 0: # when moving right, condition for left turn is exceeding the square dimension
 			#print {"left 1"}
@@ -169,19 +172,19 @@ class Enemy2(turtle.Turtle):
 
 		self.fd(self.speed2)
 
-		self.frequency2 = self.frequency2 - 1
-		if (self.frequency2==0):
+		self.freq2 = self.freq2 - 1
+		if (self.freq2==0):
 			self.enemy2_fire()
-			self.frequency2 = 73
+			self.freq2 = settings.freq2
 
 
 		for bullet in self.bullet_list:
 			y = bullet.ycor()
-			y1 = y - 30
+			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
 		for bullet in self.bullet_list:
-			if (bullet.ycor()>390 or bullet.xcor()>390 or bullet.ycor()<-390 or bullet.xcor()<-390):
+			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
 				self.bullet_list.remove(bullet)
@@ -200,24 +203,24 @@ class Enemy2(turtle.Turtle):
 num_Enemy2 = 1
 enemies2 = []
 for i in range(num_Enemy2):
-	b = Enemy2("circle", "red", random.randint(-180,180), random.randint(-100,100))
+	b = Enemy2("circle", "red", settings.x2 , settings.y2)
 	enemies2.append(b)
 
 # Enemy3 class defined
 
 class Enemy3(turtle.Turtle):
 
-	def __init__(self, spriteshape, color, startx, starty):
-		turtle.Turtle.__init__(self, shape = "tank3.gif")
+	def __init__(self, spriteshape, color, startx, starty): # green
+		turtle.Turtle.__init__(self, shape = "tank22.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
 		self.color(color)
 		self.fd(0)
-		self.setposition(startx, starty)
+		self.setposition(settings.x3, settings.y3)
 		self.bullet_list = []
-		self.frequecy3 = 127
-		self.enemyspeed3 = 10
+		self.freq3 = settings.freq3
+		self.speed3 = settings.speed3
 	
 
 	def enemy3_fire(self):
@@ -229,24 +232,24 @@ class Enemy3(turtle.Turtle):
 		bullet3.showturtle()
 		self.bullet_list.append(bullet3)
 
-	def move3(self):
-		self.frequecy3 = self.frequecy3 - 1
-		if (self.frequecy3==0):
+	def move3(self): # left and right sweeping across the x axis
+		self.freq3 = self.freq3 - 1
+		if (self.freq3==0):
 			self.enemy3_fire()
-			self.frequecy3 = 127
+			self.freq3 = settings.freq3
 		x = self.xcor()
-		x = x + self.enemyspeed3
+		x = x + self.speed3
 		self.setx(x)
-		if self.xcor() > 380 or self.xcor() < -380:
-			self.enemyspeed3  = self.enemyspeed3 * (-1) # change speed direction to left when at right boundary
+		if self.xcor() > (settings.x_max-200) or self.xcor() < (settings.x_min+200): # sweeping just the central part of the area
+			self.speed3  = self.speed3 * (-1) # change speed direction to left when at boundary
 
 		for bullet in self.bullet_list:
 			y = bullet.ycor()
-			y1 = y - 30
+			y1 = y - settings.bullet_speed
 			bullet.sety(y1)
 
 		for bullet in self.bullet_list:
-			if (bullet.ycor()>390 or bullet.xcor()>390 or bullet.ycor()<-390 or bullet.xcor()<-390):
+			if (bullet.ycor()>settings.y_max or bullet.xcor()>settings.x_max or bullet.ycor()<settings.x_min or bullet.xcor()<settings.y_min):
 				bullet.hideturtle()
 				bullet.clear()
 				self.bullet_list.remove(bullet)
@@ -256,12 +259,12 @@ class Enemy3(turtle.Turtle):
 num_Enemy3 = 1
 enemies3 = []
 for i in range(num_Enemy3):
-	b = Enemy3("circle", "red", random.randint(-180,180), random.randint(-100,200))
+	b = Enemy3("circle", "red", settings.x3, settings.y3)
 	enemies3.append(b)
 
 # Enemy3 class defined
 
-player = Player("triangle", "white", 0, -390)
+player = Player("triangle", "white", settings.x_player, settings.y_player)
 
 #key bindings
 turtle.listen()
