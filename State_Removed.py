@@ -16,8 +16,8 @@ turtle.setundobuffer(None)
 turtle.delay(1)
 # turtle.tracer(20,0)
 turtle.register_shape("tank11.gif")
-turtle.register_shape("drone1.gif")
-turtle.register_shape("drone2.gif")
+turtle.register_shape("drone11.gif")
+turtle.register_shape("drone22.gif")
 turtle.register_shape("antenna.gif")
 turtle.register_shape("bullet1.gif")
 
@@ -82,7 +82,7 @@ class Player(turtle.Turtle):
 class Enemy1(turtle.Turtle):
  
 	def __init__(self, spriteshape, color, startx, starty): 
-		turtle.Turtle.__init__(self, shape = "drone1.gif")
+		turtle.Turtle.__init__(self, shape = "drone11.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
@@ -136,7 +136,7 @@ for i in range(num_Enemy1):
 class Enemy2(turtle.Turtle):
 
 	def __init__(self, spriteshape, color, startx, starty):
-		turtle.Turtle.__init__(self, shape = "drone2.gif")
+		turtle.Turtle.__init__(self, shape = "drone22.gif")
 		self.hideturtle
 		self.speed(1)
 		self.penup()
@@ -233,7 +233,7 @@ class Enemy3(turtle.Turtle):
 		x = self.xcor()
 		y = self.ycor()
 		bullet3 = Bullet()
-		bullet3.setposition(x,y) # bullet will appear just above the player
+		bullet3.setposition(x,y-40) # bullet will appear just below the player
 		bullet3.setheading(270)
 		bullet3.showturtle()
 		self.bullet_list3.append(bullet3)
